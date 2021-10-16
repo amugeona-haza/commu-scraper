@@ -1,0 +1,14 @@
+{
+  "name": "commu-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.23.0",
+    "cheerio": "^1.0.0-rc.10",
+    "ts-node": "^10.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.0"
+  }
+}
