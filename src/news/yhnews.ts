@@ -10,8 +10,8 @@ function request (url: string) {
   })
 }
 
-export async function scrapPage (query: YorL, pageNo: number) {
-  const data = await fetchArticleList(query, pageNo)
+export async function scrapPage (query: YorL, pageNo: number, from: string, to: string) {
+  const data = await fetchArticleList(query, pageNo, from, to)
   const articleList = refineArticleInfoList(data)
 
   const result = await Promise.allSettled(articleList.map(article => scrapArticle(article, query)))
@@ -39,8 +39,8 @@ async function scrapArticle (articleInfo: ArticleInfo, query: YorL) {
   }
 }
 
-async function fetchArticleList (query: string, pageNo: number) {
-  const url = encodeURI(`https://ars.yna.co.kr/api/v2/search.asis?query=${query}&period=diy&from=20210526&to=20211126&ctype=A&page_size=10&channel=basic_kr&page_no=${pageNo}`)
+async function fetchArticleList (query: string, pageNo: number, from: string, to: string) {
+  const url = encodeURI(`https://ars.yna.co.kr/api/v2/search.asis?query=${query}&period=diy&from=${from}&to=${to}&ctype=A&page_size=10&channel=basic_kr&page_no=${pageNo}`)
   const { data } = await request(url)
   return data
 }
