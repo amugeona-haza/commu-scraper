@@ -2,19 +2,27 @@ import { scrapPage } from './yhnews'
 import { Article } from './types'
 import { getExponentiallyUniform } from '../helpers/random'
 import { delay } from '../helpers/asyncUtils'
-import moment = require('moment')
-import * as fs from 'fs'
+import * as moment from 'moment'
 import { Moment } from 'moment'
+import * as fs from 'fs'
 
-const MAXIMUM_PAGE = 50
+//  query constants
 const QUERY = '이재명'
+const END_CONDITION_AMOUNT = 6
+const END_CONDITION_UNIT_OF_TIME = 'month'
+
+//  settings
+const DATE_RANGE_AMOUNT = 1
+const DATE_RANGE_UNIT = 'week'
+const MAXIMUM_PAGE = 50
+const DELAY_SCRAPING_MS = 800
 
 function writeJson (name: string, data: any) {
   fs.writeFileSync(name, JSON.stringify(data, null, 2))
 }
 
 function generateDateRange (date: Moment) {
-  const from = moment(date).subtract(1, 'week').format('YYYYMMDD')
+  const from = moment(date).subtract(DATE_RANGE_AMOUNT, DATE_RANGE_UNIT).format('YYYYMMDD')
   const to = moment(date).format('YYYYMMDD')
   return { from, to }
 }
@@ -28,7 +36,7 @@ async function runner (from: string, to: string, pageNo: number = 1, successList
   console.log(`> success: ${successList.length}`)
   console.log(`> failed: ${failedList.length}`)
 
-  const ms = getExponentiallyUniform(800)
+  const ms = getExponentiallyUniform(DELAY_SCRAPING_MS)
   await delay(ms)
 
   if (pageNo > MAXIMUM_PAGE || (success.length + failed.length) === 0) {
@@ -51,9 +59,9 @@ async function run () {
     const { successList, failedList } = await runner(from, to)
     success.push(...successList)
     failed.push(...failedList)
-    date.subtract(1, 'week')
+    date.subtract(DATE_RANGE_AMOUNT, DATE_RANGE_UNIT)
     console.log(`success: ${success.length}, failed: ${failed.length}`)
-  } while (START_DATE.diff(date, 'month') <= 6)
+  } while (START_DATE.diff(date, END_CONDITION_UNIT_OF_TIME) <= END_CONDITION_AMOUNT)
   console.log(`complete scraping with query ${QUERY}`)
   console.timeEnd('time')
 
