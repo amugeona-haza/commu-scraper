@@ -2,3 +2,5 @@ data.json
 /node_modules/
 /.idea/
 .DS_Store
+
+*.data.json
